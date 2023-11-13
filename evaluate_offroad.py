@@ -121,6 +121,20 @@ def evaluate(data_dir):
         pred_gnd = pred_gnd.cpu().numpy()
         pred_GndSeg = segment_cloud(points.copy(), np.asarray(cfg.grid_range), cfg.voxel_size[0],
                                     elevation_map=pred_gnd.T, threshold=0.2)
+        
+        nonground_indices = np.where(pred_GndSeg == 1)[0]
+        ground_indices = np.where(pred_GndSeg == 0)[0]
+        nonground_points = points[nonground_indices, :3]  # 只选取前三列（x, y, z）
+        ground_points = points[ground_indices, :3]
+
+        pcd_nonground = o3d.geometry.PointCloud()
+        pcd_nonground.points = o3d.utility.Vector3dVector(nonground_points)
+        o3d.io.write_point_cloud("nonground_indice.ply", pcd_nonground)
+
+        pcd_ground = o3d.geometry.PointCloud()
+        pcd_ground.points = o3d.utility.Vector3dVector(ground_points)
+        o3d.io.write_point_cloud("ground_indices.ply", pcd_ground)
+        
         print(np.sum(pred_GndSeg))
         if args.visualize:
             np2ros_pub_2(points, pcl_pub, None, pred_GndSeg)

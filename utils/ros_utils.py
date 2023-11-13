@@ -200,7 +200,6 @@ def np2ros_pub_2(points, pcl_pub, timestamp, color):
     points_arr['intensity'] = color
     # points_arr['g'] = 255
     # points_arr['b'] = 255
-
     if timestamp == None:
         timestamp = rospy.Time.now()
     cloud_msg = ros_numpy.msgify(PointCloud2, points_arr,stamp =timestamp, frame_id = "/kitti/base_link")
